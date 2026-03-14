@@ -1,4 +1,5 @@
 import { Application } from 'pixi.js';
+import { World } from './World.js';
 
 // Soft placeholder background color (pale sage green — peaceful feel)
 const BACKGROUND_COLOR = 0xd4e8c2;
@@ -15,6 +16,9 @@ await app.init({
 });
 
 document.body.appendChild(app.canvas);
+
+const world = new World();
+app.stage.addChild(world);
 
 // Keep canvas filling the browser window on resize
 window.addEventListener('resize', () => {
