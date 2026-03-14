@@ -24,3 +24,43 @@ app.stage.addChild(world);
 window.addEventListener('resize', () => {
   app.renderer.resize(window.innerWidth, window.innerHeight);
 });
+
+// --- Camera panning ---
+// Dragging moves the world container in screen space.
+// world.position represents the camera offset.
+
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+
+const canvas = app.canvas;
+
+canvas.addEventListener('pointerdown', (e) => {
+  dragging = true;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  canvas.setPointerCapture(e.pointerId); // keep drag alive outside canvas
+  canvas.style.cursor = 'grabbing';
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const dx = e.clientX - lastX;
+  const dy = e.clientY - lastY;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  world.x += dx;
+  world.y += dy;
+});
+
+canvas.addEventListener('pointerup', (e) => {
+  dragging = false;
+  canvas.releasePointerCapture(e.pointerId);
+  canvas.style.cursor = 'default';
+});
+
+canvas.addEventListener('pointercancel', (e) => {
+  dragging = false;
+  canvas.releasePointerCapture(e.pointerId);
+  canvas.style.cursor = 'default';
+});
