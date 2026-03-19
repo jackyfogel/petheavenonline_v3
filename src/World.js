@@ -5,6 +5,9 @@ import { Container, Graphics, Text } from 'pixi.js';
 const WORLD_WIDTH = 5000;
 const WORLD_HEIGHT = 5000;
 
+// Set to true to draw a border around the world extent (useful for debugging).
+const SHOW_BORDER = false;
+
 export class World extends Container {
   constructor() {
     super();
@@ -12,11 +15,12 @@ export class World extends Container {
   }
 
   _drawOverlay() {
-    // Border around the world extent
-    const border = new Graphics();
-    border.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-    border.stroke({ width: 6, color: 0x2d5a27 }); // dark green border
-    this.addChild(border);
+    if (SHOW_BORDER) {
+      const border = new Graphics();
+      border.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+      border.stroke({ width: 6, color: 0x2d5a27 });
+      this.addChild(border);
+    }
 
     // Cross marker at world origin (0, 0)
     const marker = new Graphics();
