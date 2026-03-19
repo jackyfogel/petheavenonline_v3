@@ -41,5 +41,26 @@ export class World extends Container {
     label.x = 10;
     label.y = 10;
     this.addChild(label);
+
+    // Test object at world coordinate (400, 300)
+    // Confirms world-space objects pan correctly with the camera
+    const testObject = new Graphics();
+    testObject.rect(-20, -20, 40, 40);
+    testObject.fill({ color: 0x5566ff });
+    testObject.x = 400;
+    testObject.y = 300;
+    this.addChild(testObject);
+
+    const testLabel = new Text({
+      text: 'Test Object (400, 300)',
+      style: {
+        fontSize: 14,
+        fill: 0x5566ff,
+        fontFamily: 'monospace',
+      },
+    });
+    testLabel.x = 400 - testLabel.width / 2;
+    testLabel.y = 300 + 25;
+    this.addChild(testLabel);
   }
 }
