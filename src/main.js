@@ -17,7 +17,7 @@ await app.init({
 
 document.body.appendChild(app.canvas);
 
-const world = new World();
+const world = new World(app.renderer);
 app.stage.addChild(world);
 
 // Keep canvas filling the browser window on resize
