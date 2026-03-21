@@ -11,6 +11,8 @@ const SHOW_BORDER = false;
 export class World extends Container {
   constructor() {
     super();
+    // Set by main.js during drag to prevent click handlers firing on drag-release
+    this._dragging = false;
     this._drawOverlay();
   }
 
@@ -63,10 +65,26 @@ export class World extends Container {
 
     for (const [wx, wy] of testPositions) {
       const obj = new Graphics();
-      obj.rect(-20, -20, 40, 40);
-      obj.fill({ color: 0x111111 });
+
+      const draw = (color) => {
+        obj.clear();
+        obj.rect(-20, -20, 40, 40);
+        obj.fill({ color });
+      };
+
+      draw(0x111111);
       obj.x = wx;
       obj.y = wy;
+      obj.eventMode = 'static';
+      obj.cursor = 'pointer';
+
+      obj.on('pointerup', () => {
+        if (this._dragging) return;
+        console.log(`Clicked object at world (${wx}, ${wy})`);
+        draw(0xff3333);
+        setTimeout(() => draw(0x111111), 300);
+      });
+
       this.addChild(obj);
 
       const objLabel = new Text({

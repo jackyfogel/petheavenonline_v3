@@ -65,13 +65,20 @@ window.addEventListener('resize', () => {
 let dragging = false;
 let lastX = 0;
 let lastY = 0;
+let startX = 0;
+let startY = 0;
+
+const DRAG_THRESHOLD = 4; // px — movement below this is treated as a click
 
 const canvas = app.canvas;
 
 canvas.addEventListener('pointerdown', (e) => {
   dragging = true;
+  world._dragging = false; // reset drag flag for this gesture
   lastX = e.clientX;
   lastY = e.clientY;
+  startX = e.clientX;
+  startY = e.clientY;
   canvas.setPointerCapture(e.pointerId);
   canvas.style.cursor = 'grabbing';
 });
@@ -87,6 +94,12 @@ canvas.addEventListener('pointermove', (e) => {
   // Scroll the tile pattern to match the world offset
   terrain.tilePosition.x += dx;
   terrain.tilePosition.y += dy;
+  // Mark as a drag once pointer moves beyond threshold
+  const totalDx = e.clientX - startX;
+  const totalDy = e.clientY - startY;
+  if (Math.sqrt(totalDx * totalDx + totalDy * totalDy) > DRAG_THRESHOLD) {
+    world._dragging = true;
+  }
 });
 
 canvas.addEventListener('pointerup', (e) => {
