@@ -2,6 +2,21 @@
 
 ---
 
+## 2026-03-21 #2 — Start: 2026-03-21 | End: [in progress]
+
+### Work Done
+
+- Removed hardcoded positions from memorial data — memorials are now content only
+- Added LAWN config (top-left origin, centered around world origin) and GRID config (5 columns, 120×150 spacing)
+- Grid position computed at render time from memorial index; attached back as memorial.position for main.js compatibility
+- main.js required no changes
+
+### Files Modified
+
+- `src/World.js`
+
+---
+
 ## 2026-03-21 — Start: 2026-03-21 | End: 2026-03-21
 
 ### Work Done

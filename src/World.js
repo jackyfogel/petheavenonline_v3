@@ -8,24 +8,34 @@ const WORLD_HEIGHT = 5000;
 // Set to true to draw a border around the world extent (useful for debugging).
 const SHOW_BORDER = false;
 
-// Mock memorial data — shaped like future backend data.
+// Mock memorial data — content only, no position (placement is derived from grid).
 const MEMORIALS = [
-  { id: 1,  name: 'Bella',   species: 'Dog',    birthYear: 2008, deathYear: 2021, epitaph: 'Forever chasing squirrels.',      position: {  x:  400, y:  300 } },
-  { id: 2,  name: 'Oliver',  species: 'Cat',    birthYear: 2010, deathYear: 2023, epitaph: 'Napped in every sunbeam.',         position: {  x:  800, y: -200 } },
-  { id: 3,  name: 'Nemo',    species: 'Fish',   birthYear: 2015, deathYear: 2019, epitaph: 'Small but full of wonder.',        position: {  x: -300, y:  500 } },
-  { id: 4,  name: 'Max',     species: 'Dog',    birthYear: 2006, deathYear: 2020, epitaph: 'Loyal until the very last day.',   position: {  x: 1200, y:  700 } },
-  { id: 5,  name: 'Luna',    species: 'Cat',    birthYear: 2012, deathYear: 2022, epitaph: 'Moonlight and mystery.',           position: {  x: -600, y: -400 } },
-  { id: 6,  name: 'Peanut',  species: 'Rabbit', birthYear: 2014, deathYear: 2020, epitaph: 'Tiny heart, endless energy.',     position: {  x: 2000, y:  100 } },
-  { id: 7,  name: 'Coco',    species: 'Dog',    birthYear: 2009, deathYear: 2021, epitaph: 'Brought warmth to every room.',   position: {  x: -100, y: 1000 } },
-  { id: 8,  name: 'Whisper', species: 'Cat',    birthYear: 2011, deathYear: 2024, epitaph: 'Quiet and endlessly wise.',       position: {  x:  600, y: -800 } },
-  { id: 9,  name: 'Sunny',   species: 'Bird',   birthYear: 2016, deathYear: 2023, epitaph: 'Sang the mornings awake.',        position: {  x: 1500, y: -500 } },
-  { id: 10, name: 'Biscuit', species: 'Dog',    birthYear: 2007, deathYear: 2019, epitaph: 'Good boy. Always.',               position: {  x:-1000, y:  200 } },
-  { id: 11, name: 'Mochi',   species: 'Cat',    birthYear: 2017, deathYear: 2024, epitaph: 'Sweet and soft as her name.',     position: {  x:  300, y: 1800 } },
-  { id: 12, name: 'Pepper',  species: 'Rabbit', birthYear: 2013, deathYear: 2018, epitaph: 'Quick paws, gentle soul.',        position: {  x: -800, y: -900 } },
-  { id: 13, name: 'Archie',  species: 'Dog',    birthYear: 2005, deathYear: 2018, epitaph: 'Walked every trail with joy.',    position: {  x: 2500, y: 1200 } },
-  { id: 14, name: 'Misty',   species: 'Cat',    birthYear: 2003, deathYear: 2017, epitaph: 'Appeared and disappeared like fog.', position: { x:-1500, y: 1500 } },
-  { id: 15, name: 'Goldie',  species: 'Fish',   birthYear: 2018, deathYear: 2022, epitaph: 'Shimmered in still water.',       position: {  x:  900, y: 2200 } },
+  { id: 1,  name: 'Bella',   species: 'Dog',    birthYear: 2008, deathYear: 2021, epitaph: 'Forever chasing squirrels.'         },
+  { id: 2,  name: 'Oliver',  species: 'Cat',    birthYear: 2010, deathYear: 2023, epitaph: 'Napped in every sunbeam.'           },
+  { id: 3,  name: 'Nemo',    species: 'Fish',   birthYear: 2015, deathYear: 2019, epitaph: 'Small but full of wonder.'          },
+  { id: 4,  name: 'Max',     species: 'Dog',    birthYear: 2006, deathYear: 2020, epitaph: 'Loyal until the very last day.'     },
+  { id: 5,  name: 'Luna',    species: 'Cat',    birthYear: 2012, deathYear: 2022, epitaph: 'Moonlight and mystery.'             },
+  { id: 6,  name: 'Peanut',  species: 'Rabbit', birthYear: 2014, deathYear: 2020, epitaph: 'Tiny heart, endless energy.'       },
+  { id: 7,  name: 'Coco',    species: 'Dog',    birthYear: 2009, deathYear: 2021, epitaph: 'Brought warmth to every room.'     },
+  { id: 8,  name: 'Whisper', species: 'Cat',    birthYear: 2011, deathYear: 2024, epitaph: 'Quiet and endlessly wise.'         },
+  { id: 9,  name: 'Sunny',   species: 'Bird',   birthYear: 2016, deathYear: 2023, epitaph: 'Sang the mornings awake.'          },
+  { id: 10, name: 'Biscuit', species: 'Dog',    birthYear: 2007, deathYear: 2019, epitaph: 'Good boy. Always.'                 },
+  { id: 11, name: 'Mochi',   species: 'Cat',    birthYear: 2017, deathYear: 2024, epitaph: 'Sweet and soft as her name.'       },
+  { id: 12, name: 'Pepper',  species: 'Rabbit', birthYear: 2013, deathYear: 2018, epitaph: 'Quick paws, gentle soul.'          },
+  { id: 13, name: 'Archie',  species: 'Dog',    birthYear: 2005, deathYear: 2018, epitaph: 'Walked every trail with joy.'      },
+  { id: 14, name: 'Misty',   species: 'Cat',    birthYear: 2003, deathYear: 2017, epitaph: 'Appeared and disappeared like fog.'},
+  { id: 15, name: 'Goldie',  species: 'Fish',   birthYear: 2018, deathYear: 2022, epitaph: 'Shimmered in still water.'         },
 ];
+
+// Memorial lawn — one zone, centered around world origin.
+const LAWN = { x: -240, y: -150 };
+
+// Grid layout within the lawn.
+const GRID = {
+  columns:  5,
+  spacingX: 120,
+  spacingY: 150,
+};
 
 export class World extends Container {
   constructor(onMemorialClick) {
@@ -64,9 +74,19 @@ export class World extends Container {
     label.y = 10;
     this.addChild(label);
 
-    // Memorial objects driven by mock data
-    for (const memorial of MEMORIALS) {
-      const { id, name, position: { x: wx, y: wy } } = memorial;
+    // Memorial objects driven by mock data, placed on the lawn grid
+    for (let i = 0; i < MEMORIALS.length; i++) {
+      const memorial = MEMORIALS[i];
+      const { id, name } = memorial;
+
+      const col = i % GRID.columns;
+      const row = Math.floor(i / GRID.columns);
+      const wx = LAWN.x + col * GRID.spacingX;
+      const wy = LAWN.y + row * GRID.spacingY;
+
+      // Attach computed position so main.js can use memorial.position for focus/overlay
+      memorial.position = { x: wx, y: wy };
+
       const obj = new Graphics();
 
       // Tombstone shape: rectangular body with a semicircle on top
