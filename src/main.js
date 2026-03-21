@@ -56,6 +56,7 @@ let focusRaf = null;
 
 function focusOn(wx, wy, onComplete) {
   if (focusRaf !== null) cancelAnimationFrame(focusRaf);
+  if (resetRaf  !== null) { cancelAnimationFrame(resetRaf); resetRaf = null; }
 
   function step() {
     // Target position accounts for scale: world point appears at screen center
@@ -137,7 +138,7 @@ overlay.appendChild(closeBtn);
 const overlayBody = document.createElement('div');
 overlay.appendChild(overlayBody);
 
-const TOMBSTONE_BODY_HEIGHT = 48; // must match the value in World.js
+const TOMBSTONE_BODY_HEIGHT = 48; // must match h in World.js tombstone shape
 const OVERLAY_GAP = 12; // px below the tombstone bottom
 
 let activeMemorial = null;
@@ -242,7 +243,6 @@ canvas.addEventListener('pointerdown', (e) => {
   dragging = true;
   world._dragging = false; // reset drag flag for this gesture
   if (focusRaf !== null) { cancelAnimationFrame(focusRaf); focusRaf = null; }
-  if (resetRaf  !== null) { cancelAnimationFrame(resetRaf);  resetRaf  = null; }
   lastX = e.clientX;
   lastY = e.clientY;
   startX = e.clientX;
@@ -268,6 +268,7 @@ canvas.addEventListener('pointermove', (e) => {
   const totalDy = e.clientY - startY;
   if (Math.sqrt(totalDx * totalDx + totalDy * totalDy) > DRAG_THRESHOLD) {
     world._dragging = true;
+    if (resetRaf !== null) { cancelAnimationFrame(resetRaf); resetRaf = null; }
   }
 });
 
