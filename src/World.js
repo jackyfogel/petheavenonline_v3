@@ -8,6 +8,25 @@ const WORLD_HEIGHT = 5000;
 // Set to true to draw a border around the world extent (useful for debugging).
 const SHOW_BORDER = false;
 
+// Mock memorial data — shaped like future backend data.
+const MEMORIALS = [
+  { id: 1,  name: 'Bella',   species: 'Dog',    birthYear: 2008, deathYear: 2021, epitaph: 'Forever chasing squirrels.',      position: {  x:  400, y:  300 } },
+  { id: 2,  name: 'Oliver',  species: 'Cat',    birthYear: 2010, deathYear: 2023, epitaph: 'Napped in every sunbeam.',         position: {  x:  800, y: -200 } },
+  { id: 3,  name: 'Nemo',    species: 'Fish',   birthYear: 2015, deathYear: 2019, epitaph: 'Small but full of wonder.',        position: {  x: -300, y:  500 } },
+  { id: 4,  name: 'Max',     species: 'Dog',    birthYear: 2006, deathYear: 2020, epitaph: 'Loyal until the very last day.',   position: {  x: 1200, y:  700 } },
+  { id: 5,  name: 'Luna',    species: 'Cat',    birthYear: 2012, deathYear: 2022, epitaph: 'Moonlight and mystery.',           position: {  x: -600, y: -400 } },
+  { id: 6,  name: 'Peanut',  species: 'Rabbit', birthYear: 2014, deathYear: 2020, epitaph: 'Tiny heart, endless energy.',     position: {  x: 2000, y:  100 } },
+  { id: 7,  name: 'Coco',    species: 'Dog',    birthYear: 2009, deathYear: 2021, epitaph: 'Brought warmth to every room.',   position: {  x: -100, y: 1000 } },
+  { id: 8,  name: 'Whisper', species: 'Cat',    birthYear: 2011, deathYear: 2024, epitaph: 'Quiet and endlessly wise.',       position: {  x:  600, y: -800 } },
+  { id: 9,  name: 'Sunny',   species: 'Bird',   birthYear: 2016, deathYear: 2023, epitaph: 'Sang the mornings awake.',        position: {  x: 1500, y: -500 } },
+  { id: 10, name: 'Biscuit', species: 'Dog',    birthYear: 2007, deathYear: 2019, epitaph: 'Good boy. Always.',               position: {  x:-1000, y:  200 } },
+  { id: 11, name: 'Mochi',   species: 'Cat',    birthYear: 2017, deathYear: 2024, epitaph: 'Sweet and soft as her name.',     position: {  x:  300, y: 1800 } },
+  { id: 12, name: 'Pepper',  species: 'Rabbit', birthYear: 2013, deathYear: 2018, epitaph: 'Quick paws, gentle soul.',        position: {  x: -800, y: -900 } },
+  { id: 13, name: 'Archie',  species: 'Dog',    birthYear: 2005, deathYear: 2018, epitaph: 'Walked every trail with joy.',    position: {  x: 2500, y: 1200 } },
+  { id: 14, name: 'Misty',   species: 'Cat',    birthYear: 2003, deathYear: 2017, epitaph: 'Appeared and disappeared like fog.', position: { x:-1500, y: 1500 } },
+  { id: 15, name: 'Goldie',  species: 'Fish',   birthYear: 2018, deathYear: 2022, epitaph: 'Shimmered in still water.',       position: {  x:  900, y: 2200 } },
+];
+
 export class World extends Container {
   constructor() {
     super();
@@ -44,35 +63,21 @@ export class World extends Container {
     label.y = 10;
     this.addChild(label);
 
-    // Test objects spread across positive and negative world coordinates
-    const testPositions = [
-      [  400,   300],
-      [  800,  -200],
-      [ -300,   500],
-      [ 1200,   700],
-      [ -600,  -400],
-      [ 2000,   100],
-      [ -100,  1000],
-      [  600, -800],
-      [ 1500, -500],
-      [-1000,   200],
-      [  300,  1800],
-      [ -800,  -900],
-      [ 2500,  1200],
-      [-1500,  1500],
-      [  900,  2200],
-    ];
-
-    for (const [wx, wy] of testPositions) {
+    // Memorial objects driven by mock data
+    for (const memorial of MEMORIALS) {
+      const { id, name, position: { x: wx, y: wy } } = memorial;
       const obj = new Graphics();
 
+      // Tombstone shape: rectangular body with a semicircle on top
+      const w = 36, h = 48, r = 18; // body width/height, arc radius
       const draw = (color) => {
         obj.clear();
-        obj.rect(-20, -20, 40, 40);
+        obj.rect(-w / 2, 0, w, h);          // body
+        obj.arc(0, 0, r, Math.PI, 0);        // rounded top
         obj.fill({ color });
       };
 
-      draw(0x111111);
+      draw(0x444444);
       obj.x = wx;
       obj.y = wy;
       obj.eventMode = 'static';
@@ -80,20 +85,20 @@ export class World extends Container {
 
       obj.on('pointerup', () => {
         if (this._dragging) return;
-        console.log(`Clicked object at world (${wx}, ${wy})`);
+        console.log(`Clicked memorial id=${id} name=${name}`);
         draw(0xff3333);
-        setTimeout(() => draw(0x111111), 300);
+        setTimeout(() => draw(0x444444), 300);
       });
 
       this.addChild(obj);
 
-      const objLabel = new Text({
-        text: `(${wx}, ${wy})`,
-        style: { fontSize: 12, fill: 0x111111, fontFamily: 'monospace' },
+      const nameLabel = new Text({
+        text: name,
+        style: { fontSize: 13, fill: 0x222222, fontFamily: 'serif' },
       });
-      objLabel.x = wx - objLabel.width / 2;
-      objLabel.y = wy + 25;
-      this.addChild(objLabel);
+      nameLabel.x = wx - nameLabel.width / 2;
+      nameLabel.y = wy + h + 6;
+      this.addChild(nameLabel);
     }
   }
 }
