@@ -9,7 +9,14 @@
 - Removed hardcoded positions from memorial data — memorials are now content only
 - Added LAWN config (top-left origin, centered around world origin) and GRID config (5 columns, 120×150 spacing)
 - Grid position computed at render time from memorial index; attached back as memorial.position for main.js compatibility
-- main.js required no changes
+- Extended camera focus to animate scale (1.0 → 1.4) alongside pan using the same ease-out lerp
+- Centering formula updated to account for scale: targetX = innerWidth/2 - wx * FOCUS_SCALE
+- Terrain tileScale synced to world.scale each animation frame so grass zooms with the world
+- repositionOverlay updated to multiply world coords by world.scale for correct screen position under zoom
+- Overlay still appears only after pan+zoom both complete
+- Fixed initial camera position: on load, world centers on the memorial grid at scale 1
+- Fixed zoom reset: closing the overlay smoothly animates scale back to 1, keeping current view center fixed
+- Drag cancels reset animation cleanly
 
 ### Files Modified
 
