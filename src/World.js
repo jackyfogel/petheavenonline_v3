@@ -42,25 +42,40 @@ export class World extends Container {
     label.y = 10;
     this.addChild(label);
 
-    // Test object at world coordinate (400, 300)
-    // Confirms world-space objects pan correctly with the camera
-    const testObject = new Graphics();
-    testObject.rect(-20, -20, 40, 40);
-    testObject.fill({ color: 0x5566ff });
-    testObject.x = 400;
-    testObject.y = 300;
-    this.addChild(testObject);
+    // Test objects spread across positive and negative world coordinates
+    const testPositions = [
+      [  400,   300],
+      [  800,  -200],
+      [ -300,   500],
+      [ 1200,   700],
+      [ -600,  -400],
+      [ 2000,   100],
+      [ -100,  1000],
+      [  600, -800],
+      [ 1500, -500],
+      [-1000,   200],
+      [  300,  1800],
+      [ -800,  -900],
+      [ 2500,  1200],
+      [-1500,  1500],
+      [  900,  2200],
+    ];
 
-    const testLabel = new Text({
-      text: 'Test Object (400, 300)',
-      style: {
-        fontSize: 14,
-        fill: 0x5566ff,
-        fontFamily: 'monospace',
-      },
-    });
-    testLabel.x = 400 - testLabel.width / 2;
-    testLabel.y = 300 + 25;
-    this.addChild(testLabel);
+    for (const [wx, wy] of testPositions) {
+      const obj = new Graphics();
+      obj.rect(-20, -20, 40, 40);
+      obj.fill({ color: 0x111111 });
+      obj.x = wx;
+      obj.y = wy;
+      this.addChild(obj);
+
+      const objLabel = new Text({
+        text: `(${wx}, ${wy})`,
+        style: { fontSize: 12, fill: 0x111111, fontFamily: 'monospace' },
+      });
+      objLabel.x = wx - objLabel.width / 2;
+      objLabel.y = wy + 25;
+      this.addChild(objLabel);
+    }
   }
 }
