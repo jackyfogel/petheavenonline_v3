@@ -53,7 +53,7 @@ app.stage.addChild(terrain);
 
 let focusRaf = null;
 
-function focusOn(wx, wy) {
+function focusOn(wx, wy, onComplete) {
   if (focusRaf !== null) cancelAnimationFrame(focusRaf);
 
   function step() {
@@ -70,6 +70,8 @@ function focusOn(wx, wy) {
     terrain.tilePosition.x += world.x - prevX;
     terrain.tilePosition.y += world.y - prevY;
 
+    repositionOverlay();
+
     const distX = Math.abs(targetX - world.x);
     const distY = Math.abs(targetY - world.y);
 
@@ -82,14 +84,75 @@ function focusOn(wx, wy) {
       world.x = targetX;
       world.y = targetY;
       focusRaf = null;
+      if (onComplete) onComplete();
     }
   }
 
   focusRaf = requestAnimationFrame(step);
 }
 
+// --- Memorial detail overlay ---
+// A plain HTML card shown when a memorial is clicked. Owned entirely by main.js.
+
+const overlay = document.createElement('div');
+overlay.style.cssText = `
+  display: none;
+  position: fixed;
+  background: white;
+  border: 1px solid #aaa;
+  padding: 20px 24px;
+  min-width: 220px;
+  font-family: serif;
+  z-index: 10;
+  transform: translateX(-50%);
+`;
+document.body.appendChild(overlay);
+
+const closeBtn = document.createElement('button');
+closeBtn.textContent = '✕';
+closeBtn.style.cssText = `
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+`;
+closeBtn.addEventListener('click', () => { overlay.style.display = 'none'; activeMemorial = null; });
+overlay.appendChild(closeBtn);
+
+const overlayBody = document.createElement('div');
+overlay.appendChild(overlayBody);
+
+const TOMBSTONE_BODY_HEIGHT = 48; // must match the value in World.js
+const OVERLAY_GAP = 12; // px below the tombstone bottom
+
+let activeMemorial = null;
+
+function repositionOverlay() {
+  if (!activeMemorial) return;
+  const { x: wx, y: wy } = activeMemorial.position;
+  overlay.style.left = `${world.x + wx}px`;
+  overlay.style.top  = `${world.y + wy + TOMBSTONE_BODY_HEIGHT + OVERLAY_GAP}px`;
+}
+
+function showOverlay(memorial) {
+  activeMemorial = memorial;
+  overlayBody.innerHTML = `
+    <h2 style="margin:0 0 4px;">${memorial.name}</h2>
+    <p style="margin:0 0 2px;">${memorial.species}</p>
+    <p style="margin:0 0 8px;">${memorial.birthYear} – ${memorial.deathYear}</p>
+    <p style="margin:0; font-style:italic;">${memorial.epitaph}</p>
+  `;
+  repositionOverlay();
+  overlay.style.display = 'block';
+}
+
 // --- World container (border, origin marker, future memorials) ---
-const world = new World(focusOn);
+const world = new World((memorial) => {
+  focusOn(memorial.position.x, memorial.position.y, () => showOverlay(memorial));
+});
 app.stage.addChild(world);
 
 // Keep canvas and terrain filling the browser window on resize
@@ -136,6 +199,7 @@ canvas.addEventListener('pointermove', (e) => {
   // Scroll the tile pattern to match the world offset
   terrain.tilePosition.x += dx;
   terrain.tilePosition.y += dy;
+  repositionOverlay();
   // Mark as a drag once pointer moves beyond threshold
   const totalDx = e.clientX - startX;
   const totalDy = e.clientY - startY;

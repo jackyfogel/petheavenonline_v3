@@ -16,6 +16,9 @@
 - Click logs memorial id + name and flashes red briefly
 - Added smooth camera focus: clicking a memorial animates the camera to center it on screen using ease-out lerp
 - Dragging while a focus animation is in progress cancels the animation cleanly
+- Added HTML overlay card showing memorial name, species, years, and epitaph on click
+- Overlay appears immediately on click in parallel with the camera focus animation
+- Overlay has a close (✕) button; clicking it hides the card
 
 ### Files Modified
 
