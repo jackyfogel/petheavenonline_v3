@@ -2,7 +2,7 @@
 
 ---
 
-## 2026-03-21 — Start: 2026-03-21 | End: [in progress]
+## 2026-03-21 — Start: 2026-03-21 | End: 2026-03-21
 
 ### Work Done
 
@@ -17,7 +17,10 @@
 - Added smooth camera focus: clicking a memorial animates the camera to center it on screen using ease-out lerp
 - Dragging while a focus animation is in progress cancels the animation cleanly
 - Added HTML overlay card showing memorial name, species, years, and epitaph on click
-- Overlay appears immediately on click in parallel with the camera focus animation
+- Overlay positioned directly below the clicked tomb, horizontally centered, tracking camera movement
+- Overlay appears only after the camera focus animation completes
+- Clicking a new tomb mid-pan cancels the pending overlay and starts fresh
+- Drag while overlay is open keeps it anchored below the tomb
 - Overlay has a close (✕) button; clicking it hides the card
 
 ### Files Modified
