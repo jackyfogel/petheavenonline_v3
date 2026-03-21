@@ -14,6 +14,8 @@
 - Replaced test squares with tombstone-shaped Graphics objects (rectangle body + semicircle top)
 - Each memorial shows a pet name label beneath it
 - Click logs memorial id + name and flashes red briefly
+- Added smooth camera focus: clicking a memorial animates the camera to center it on screen using ease-out lerp
+- Dragging while a focus animation is in progress cancels the animation cleanly
 
 ### Files Modified
 

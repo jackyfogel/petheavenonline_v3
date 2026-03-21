@@ -47,8 +47,49 @@ const terrain = new TilingSprite({
 });
 app.stage.addChild(terrain);
 
+// --- Camera focus animation ---
+// Smoothly moves the camera so the given world coordinate is centered on screen.
+// Uses an ease-out lerp — fast at first, settles gently.
+
+let focusRaf = null;
+
+function focusOn(wx, wy) {
+  if (focusRaf !== null) cancelAnimationFrame(focusRaf);
+
+  function step() {
+    const targetX = window.innerWidth  / 2 - wx;
+    const targetY = window.innerHeight / 2 - wy;
+
+    const prevX = world.x;
+    const prevY = world.y;
+
+    world.x += (targetX - world.x) * 0.08;
+    world.y += (targetY - world.y) * 0.08;
+
+    // Keep terrain tilePosition in sync with world movement
+    terrain.tilePosition.x += world.x - prevX;
+    terrain.tilePosition.y += world.y - prevY;
+
+    const distX = Math.abs(targetX - world.x);
+    const distY = Math.abs(targetY - world.y);
+
+    if (distX > 0.5 || distY > 0.5) {
+      focusRaf = requestAnimationFrame(step);
+    } else {
+      // Snap to exact target
+      terrain.tilePosition.x += targetX - world.x;
+      terrain.tilePosition.y += targetY - world.y;
+      world.x = targetX;
+      world.y = targetY;
+      focusRaf = null;
+    }
+  }
+
+  focusRaf = requestAnimationFrame(step);
+}
+
 // --- World container (border, origin marker, future memorials) ---
-const world = new World();
+const world = new World(focusOn);
 app.stage.addChild(world);
 
 // Keep canvas and terrain filling the browser window on resize
@@ -75,6 +116,7 @@ const canvas = app.canvas;
 canvas.addEventListener('pointerdown', (e) => {
   dragging = true;
   world._dragging = false; // reset drag flag for this gesture
+  if (focusRaf !== null) { cancelAnimationFrame(focusRaf); focusRaf = null; }
   lastX = e.clientX;
   lastY = e.clientY;
   startX = e.clientX;

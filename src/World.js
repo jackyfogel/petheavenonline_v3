@@ -28,10 +28,11 @@ const MEMORIALS = [
 ];
 
 export class World extends Container {
-  constructor() {
+  constructor(onFocus) {
     super();
     // Set by main.js during drag to prevent click handlers firing on drag-release
     this._dragging = false;
+    this._onFocus = onFocus;
     this._drawOverlay();
   }
 
@@ -88,6 +89,7 @@ export class World extends Container {
         console.log(`Clicked memorial id=${id} name=${name}`);
         draw(0xff3333);
         setTimeout(() => draw(0x444444), 300);
+        this._onFocus(wx, wy);
       });
 
       this.addChild(obj);
